@@ -39,113 +39,134 @@ Make sure you have `pip` installed, then run:
 
 ```bash
 pip install django python-dotenv
-💡 Hint:
+```
 
-django is the main web framework.
+💡 **Hint:**  
+- `django` is the main web framework.  
+- `python-dotenv` lets you safely manage secret data (like email passwords) in a `.env` file.  
 
-python-dotenv lets you safely manage secret data (like email passwords) in a .env file.
+---
 
-Configure your email settings
-Create a .env file in the project root:
+### Configure your email settings
 
-ini
-Copy code
+Create a `.env` file in the project root:
+
+```
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
 EMAIL_HOST_USER=youremail@gmail.com
 EMAIL_HOST_PASSWORD=your_app_password
-💡 Hint:
+```
 
-For Gmail, enable 2-Step Verification and create an App Password.
+💡 **Hint:**  
+- For Gmail, enable **2-Step Verification** and create an **App Password**.  
+- For other providers, replace SMTP host/port accordingly.  
+- `.env` is ignored by Git, so credentials are safe.
 
-For other providers, replace SMTP host/port accordingly.
+---
 
-.env is ignored by Git, so credentials are safe.
+### Apply database migrations
 
-Apply database migrations
-bash
-Copy code
+```bash
 python manage.py migrate
-💡 Hint: This command creates all necessary tables for users, OTP codes, and sessions.
+```
 
-Create a superuser (optional)
-bash
-Copy code
+💡 **Hint:** This command creates all necessary tables for users, OTP codes, and sessions.
+
+---
+
+### Create a superuser (optional)
+
+```bash
 python manage.py createsuperuser
-💡 Hint: Access Django admin at http://127.0.0.1:8000/admin.
+```
 
-Run the development server
-bash
-Copy code
+💡 **Hint:** Access Django admin at `http://127.0.0.1:8000/admin`.
+
+---
+
+### Run the development server
+
+```bash
 python manage.py runserver
+```
+
 Open your browser at:
 
-👉 http://127.0.0.1:8000/
+👉 `http://127.0.0.1:8000/`
 
-💡 Hint: Check Django console for OTP email logs if testing locally.
+💡 **Hint:** Check Django console for OTP email logs if testing locally.
 
-Test the OTP flow
-Go to Sign Up.
+---
 
-Enter a valid email and password.
+### Test the OTP flow
 
-Check your inbox — you should receive:
+1. Go to **Sign Up**.  
+2. Enter a valid email and password.  
+3. Check your inbox — you should receive:
 
-pgsql
-Copy code
+```
 Subject: Your OTP Code
 Your One-Time Password (OTP) is: 483921
-Enter the OTP to verify your account.
+```
 
-💡 Hint: OTPs expire quickly (e.g., 2 minutes). Request a new one if needed.
+4. Enter the OTP to verify your account.  
 
-(Optional) Customize the look
-Edit templates in templates/accounts/ or static files in static/.
+💡 **Hint:** OTPs expire quickly (e.g., 2 minutes). Request a new one if needed.
 
-💡 Hint: Tailwind CSS allows easy UI customization without touching authentication logic.
+---
 
-✅ Everything is ready!
-You can now:
+### (Optional) Customize the look
 
-Sign up new users
+Edit templates in `templates/accounts/` or static files in `static/`.  
 
-Verify emails with OTP
+💡 **Hint:** Tailwind CSS allows easy UI customization without touching authentication logic.
 
-Log in securely
+---
 
-Reset passwords via email
+### ✅ Everything is ready!
 
-🧭 User Guide (How to Use)
-Step 1: Open the homepage → options to Sign Up or Log In.
-Step 2: Register with an email → receive OTP → verify.
-Step 3: Log in with email/password → verify OTP.
-Step 4: Forgot password → request OTP → reset password.
+You can now:  
+- Sign up new users  
+- Verify emails with OTP  
+- Log in securely  
+- Reset passwords via email  
 
-🧤 Security Notes
-.env and db.sqlite3 are ignored by Git.
+---
 
-Passwords are hashed — no plaintext storage.
+## 🧭 User Guide (How to Use)
 
-OTPs are randomly generated and expire quickly.
+**Step 1:** Open the homepage → options to Sign Up or Log In.  
+**Step 2:** Register with an email → receive OTP → verify.  
+**Step 3:** Log in with email/password → verify OTP.  
+**Step 4:** Forgot password → request OTP → reset password.
 
-Sensitive data stays local and secure.
+---
 
-🧠 How It Works
-User signs up/logs in.
+## 🧤 Security Notes
 
-System generates OTP.
+- `.env` and `db.sqlite3` are ignored by Git.  
+- Passwords are hashed — no plaintext storage.  
+- OTPs are randomly generated and expire quickly.  
+- Sensitive data stays local and secure.
 
-OTP sent via email.
+---
 
-User enters OTP to verify.
+## 🧠 How It Works
 
-Access granted.
+1. User signs up/logs in.  
+2. System generates OTP.  
+3. OTP sent via email.  
+4. User enters OTP to verify.  
+5. Access granted.
 
-🧩 Folder Structure (Simplified)
-bash
-Copy code
+---
+
+## 🧩 Folder Structure (Simplified)
+
+```
 django-email-otp-auth/
 │
 ├── accounts/               # Authentication app
@@ -161,11 +182,21 @@ django-email-otp-auth/
 ├── templates/              # Global templates
 ├── manage.py
 └── .env (not included)
-💡 Purpose
-Clean, reusable foundation for Django projects needing email-based OTP authentication.
+```
+
+---
+
+## 💡 Purpose
+
+Clean, reusable foundation for Django projects needing **email-based OTP authentication**.  
 Ideal for login systems, admin portals, or verification flows without third-party APIs.
 
-🧾 License
+---
+
+## 🧾 License
+
 MIT License — open-source.
+
+---
 
 👨‍💻 Developed with ❤️ using Django and Tailwind CSS
