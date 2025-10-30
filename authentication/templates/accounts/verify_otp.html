@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تأیید ایمیل</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background: #f7f8fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .otp-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            width: 380px;
+            text-align: center;
+        }
+        h2 { margin-bottom: 15px; color: #333; }
+        .otp-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #00bfff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:disabled { background: #999; cursor: not-allowed; }
+        .resend-btn {
+            margin-top: 15px;
+            background: #ff9800;
+        }
+        .timer {
+            margin-top: 10px;
+            color: #555;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="otp-container">
+        <h2>تأیید ایمیل</h2>
+        <p>کدی که به ایمیل شما ارسال شد را وارد کنید:</p>
+
+        <form method="post" action="{% url 'verify_otp' %}">
+            {% csrf_token %}
+            <input type="text" name="code" maxlength="6" placeholder="کد ۶ رقمی" class="otp-input" required>
+            <button type="submit">تأیید</button>
+        </form>
+
+        <button id="resend-btn" class="resend-btn" disabled>ارسال دوباره کد</button>
+        <div class="timer" id="timer"></div>
+    </div>
+
+    <script>
+        let countdown = 120; // 2 دقیقه
+        let resendBtn = document.getElementById("resend-btn");
+        let timerEl = document.getElementById("timer");
+
+        function updateTimer() {
+            let minutes = Math.floor(countdown / 60);
+            let seconds = countdown % 60;
+            timerEl.textContent = `ارسال دوباره کد تا ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+
+            if (countdown <= 0) {
+                resendBtn.disabled = false;
+                timerEl.textContent = "می‌توانید دوباره کد بگیرید.";
+                clearInterval(interval);
+            }
+            countdown--;
+        }
+
+        let interval = setInterval(updateTimer, 1000);
+
+        resendBtn.addEventListener("click", function() {
+            fetch("{% url 'resend_otp' %}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire("✅", "کد جدید به ایمیل شما ارسال شد.", "success");
+                        resendBtn.disabled = true;
+                        countdown = 120;
+                        interval = setInterval(updateTimer, 1000);
+                    } else {
+                        Swal.fire("⏳", data.message, "warning");
+                    }
+                });
+        });
+
+        // نمایش پیام‌های جنگو با SweetAlert
+        {% if messages %}
+            {% for message in messages %}
+                Swal.fire({
+                    icon: "{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}",
+                    title: "{{ message }}",
+                    confirmButtonText: "باشه"
+                });
+            {% endfor %}
+        {% endif %}
+    </script>
+</body>
+</html>
+

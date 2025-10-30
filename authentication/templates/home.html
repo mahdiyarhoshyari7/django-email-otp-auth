@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+      <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!---->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <!-- Tailwind (Play CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body>
+{% if messages %}
+        <script>
+            {% for message in messages %}
+            Swal.fire({
+                icon: "{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}",
+                title: "{{ message }}",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            {% endfor %}
+        </script>
+{% endif %}
+<div class="header-user-actions flex items-center gap-3" dir="rtl">
+  {% if user.is_authenticated %}
+  <div x-data="{ open: false }" class="relative">
+    <button type="button" @click="open = !open"
+      class="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-md shadow-sm hover:bg-gray-50 transition">
+      <ion-icon name="person-circle-outline" class="text-2xl"></ion-icon>
+      <span class="hidden sm:inline">{{ user.username }}</span>
+      <ion-icon name="chevron-down-outline" class="text-sm"></ion-icon>
+    </button>
+
+    <!-- dropdown -->
+    <div x-show="open" x-cloak @click.away="open = false"
+         class="origin-top-right absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+      <a href="" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">پروفایل</a>
+      <a href="" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">سبد خرید</a>
+      <a href="{% url 'logout' %}" class="block px-4 py-2 text-red-600 hover:bg-red-50">خروج</a>
+    </div>
+  </div>
+  {% else %}
+  <div class="flex gap-2 items-center ">
+    <a href="{% url 'signup' %}" class="darkmode-ignore px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition ">عضویت</a>
+    <a href="{% url 'login' %}" class="px-3 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 flex items-center gap-2 transition ">
+      <ion-icon name="log-in-outline"></ion-icon> ورود
+    </a>
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>

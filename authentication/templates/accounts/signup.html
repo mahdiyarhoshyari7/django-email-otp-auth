@@ -1,0 +1,148 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>ثبت نام</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen flex items-center justify-center p-4">
+
+  <!-- کارت فرم -->
+  <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-8 sm:p-10 w-full max-w-md sm:max-w-lg">
+    <h2 class="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">ثبت نام</h2>
+
+    <form method="post" class="space-y-6" id="signup-form">
+      {% csrf_token %}
+
+      <!-- Username -->
+      <div>
+        <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">نام کاربری</label>
+        {{ form.username|attr:"class:w-full px-4 py-3 rounded-xl border dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-600 dark:bg-gray-700 dark:text-gray-100" }}
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">ایمیل</label>
+        {{ form.email|attr:"class:w-full px-4 py-3 rounded-xl border dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-600 dark:bg-gray-700 dark:text-gray-100" }}
+      </div>
+
+      <!-- Password -->
+      <div class="relative">
+        <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">رمز عبور</label>
+        {{ form.password|attr:"class:w-full px-4 py-3 rounded-xl border dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-600 dark:bg-gray-700 dark:text-gray-100 pr-10" }}
+        <i class="ri-eye-off-line absolute left-3 bottom-3 text-gray-500 cursor-pointer dark:text-gray-400" id="togglePassword"></i>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded mt-2">
+          <div id="password-strength-bar" class="h-2 rounded transition-all duration-300"></div>
+        </div>
+
+        <!-- قوانین -->
+        <p id="password-rules" class="text-sm mt-2 text-gray-500 dark:text-gray-400">
+          🔴 شامل حداقل ۸ کاراکتر، یک حرف بزرگ، یک حرف کوچک، یک عدد و یک کاراکتر خاص باشد.
+        </p>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="relative">
+        <label for="{{ form.confirm_password.id_for_label }}" class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">تأیید رمز عبور</label>
+        {{ form.confirm_password|attr:"class:w-full px-4 py-3 rounded-xl border dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-600 dark:bg-gray-700 dark:text-gray-100 pr-10" }}
+        <i class="ri-eye-off-line absolute left-3 bottom-3 text-gray-500 cursor-pointer dark:text-gray-400" id="toggleConfirmPassword"></i>
+      </div>
+
+      <button type="submit" class="w-full bg-indigo-600 dark:bg-indigo-500 text-white py-3 rounded-xl shadow-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-lg font-semibold">
+        ثبت نام
+      </button>
+    </form>
+
+    <!-- سوئیچ دارک/لایت -->
+  </div>
+
+  <script>
+    // toggle password
+    function setupToggle(inputId, toggleId) {
+      const input = document.getElementById(inputId);
+      const toggle = document.getElementById(toggleId);
+      if (!input || !toggle) return;
+      toggle.addEventListener("click", () => {
+        const type = input.type === "password" ? "text" : "password";
+        input.type = type;
+        toggle.classList.toggle("ri-eye-line");
+        toggle.classList.toggle("ri-eye-off-line");
+      });
+    }
+    setupToggle("id_password", "togglePassword");
+    setupToggle("id_confirm_password", "toggleConfirmPassword");
+
+    // password strength
+    const passwordInput = document.getElementById("id_password");
+    const rulesText = document.getElementById("password-rules");
+    const bar = document.getElementById("password-strength-bar");
+
+    passwordInput?.addEventListener("input", () => {
+      const val = passwordInput.value;
+
+      const checks = {
+        length: val.length >= 8,
+        upper: /[A-Z]/.test(val),
+        lower: /[a-z]/.test(val),
+        number: /\d/.test(val),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(val),
+      };
+      const passed = Object.values(checks).filter(Boolean).length;
+
+      const colors = ["bg-red-500","bg-orange-500","bg-yellow-400","bg-green-400","bg-green-500"];
+      bar.style.width = `${(passed / 5) * 100}%`;
+      bar.className = `h-2 rounded transition-all duration-300 ${colors[passed-1] || ""}`;
+
+      if (passed === 5) {
+        passwordInput.classList.remove("border-red-500");
+        passwordInput.classList.add("border-green-500");
+        rulesText.textContent = "✅ رمز عبور قوی است.";
+        rulesText.classList.add("text-green-600");
+        rulesText.classList.remove("text-red-500");
+      } else {
+        passwordInput.classList.remove("border-green-500");
+        passwordInput.classList.add("border-red-500");
+        rulesText.textContent = "🔴 شامل حداقل ۸ کاراکتر، یک حرف بزرگ، یک حرف کوچک، یک عدد و یک کاراکتر خاص باشد.";
+        rulesText.classList.add("text-red-500");
+        rulesText.classList.remove("text-green-600");
+      }
+    });
+
+    // جلوگیری از ارسال وقتی پسوردها مچ نیستند
+    const formEl = document.getElementById("signup-form");
+    const confirmInput = document.getElementById("id_confirm_password");
+    formEl?.addEventListener("submit", (e) => {
+      if (passwordInput && confirmInput && passwordInput.value !== confirmInput.value) {
+        e.preventDefault();
+        Swal.fire({ icon: 'error', title: 'خطا', text: 'رمز عبور و تکرار آن یکسان نیست.', confirmButtonText: 'باشه' });
+      }
+    });
+
+    // SweetAlert از messages
+    {% if messages %}
+      {% for msg in messages %}
+        Swal.fire({
+          icon: `{% if "success" in msg.tags %}success{% elif "error" in msg.tags %}error{% elif "warning" in msg.tags %}warning{% else %}info{% endif %}`,
+          title: `{% if "success" in msg.tags %}موفقیت{% elif "error" in msg.tags %}خطا{% elif "warning" in msg.tags %}هشدار{% else %}پیام{% endif %}`,
+          text: `{{ msg|escapejs }}`,
+          confirmButtonText: 'باشه'
+        });
+      {% endfor %}
+    {% endif %}
+
+    // سوئیچ دارک مود
+    const html = document.documentElement;
+    document.getElementById("toggle-dark").addEventListener("click", () => {
+      html.classList.toggle("dark");
+    });
+  </script>
+</body>
+</html>
