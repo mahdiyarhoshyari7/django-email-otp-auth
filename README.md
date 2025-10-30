@@ -33,7 +33,8 @@ When a user signs up or logs in, an OTP code is sent to their registered email, 
 
 ## 🚀 Installation & Setup
 
-2. Create a virtual environment and activate it
+1. Create a virtual environment and activate it
+   
 python -m venv venv
 venv\Scripts\activate   # On Windows
 # OR
@@ -42,7 +43,7 @@ source venv/bin/activate  # On macOS/Linux
 
 💡 Hint: Creating a virtual environment keeps all your project dependencies isolated from other Python projects on your system.
 
-3. Install required packages
+2. Install required packages
 
 Make sure you have pip installed, then run:
 
@@ -55,7 +56,7 @@ django is the main web framework.
 
 python-dotenv lets you safely manage secret data (like email passwords) in a .env file.
 
-4. Configure your email settings
+3. Configure your email settings
 
 To send OTP codes via email, you need to set up your SMTP credentials.
 In the project’s root directory, create a new file named .env and add:
@@ -76,19 +77,19 @@ If you’re using another provider (like Outlook or Yahoo), replace the SMTP hos
 
 Your .env file is hidden from GitHub thanks to .gitignore, so your credentials are safe.
 
-5. Apply database migrations
+4. Apply database migrations
 python manage.py migrate
 
 
 💡 Hint: This command creates all necessary database tables for users, OTP codes, and sessions.
 
-6. Create a superuser (optional)
+5. Create a superuser (optional)
 python manage.py createsuperuser
 
 
 💡 Hint: This allows you to log into Django’s admin panel at http://127.0.0.1:8000/admin.
 
-7. Run the development server
+6. Run the development server
 python manage.py runserver
 
 
@@ -102,7 +103,7 @@ If you’re testing email OTP locally, make sure your email credentials in .env 
 
 You can check the Django console output — it will show logs whenever an OTP email is sent.
 
-8. Test the OTP flow
+7. Test the OTP flow
 
 Go to the Sign Up page.
 
@@ -118,7 +119,7 @@ Enter the code on the verification page to complete your registration.
 
 💡 Hint: OTPs are short-lived (e.g., 2 minutes). If it expires, you can request a new one.
 
-9. (Optional) Customize the look
+8. (Optional) Customize the look
 
 If you want to adjust styles, open your templates inside templates/accounts/ and static files in static/.
 This project uses Tailwind CSS, which you can extend or modify easily.
